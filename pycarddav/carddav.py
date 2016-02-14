@@ -26,7 +26,7 @@ contains the class PyCardDAv and some associated functions and definitions
 
 from collections import namedtuple
 import requests
-import urlparse
+import urllib.parse
 import logging
 import lxml.etree as ET
 
@@ -35,7 +35,7 @@ def get_random_href():
     """returns a random href"""
     import random
     tmp_list = list()
-    for _ in xrange(3):
+    for _ in range(3):
         rand_number = random.randint(0, 0x100000000)
         tmp_list.append("{0:x}".format(rand_number))
     return "-".join(tmp_list).upper()
@@ -85,7 +85,7 @@ class PyCardDAV(object):
         else:
             urllib3.contrib.pyopenssl.inject_into_urllib3()
 
-        split_url = urlparse.urlparse(resource)
+        split_url = urllib.parse.urlparse(resource)
         url_tuple = namedtuple('url', 'resource base path')
         self.url = url_tuple(resource,
                              split_url.scheme + '://' + split_url.netloc,
@@ -214,8 +214,8 @@ class PyCardDAV(object):
             response = requests.put(remotepath, data=card, headers=headers,
                                     **self._settings)
             if response.ok:
-                parsed_url = urlparse.urlparse(remotepath)
-                if 'etag' not in response.headers.keys() or response.headers['etag'] is None:
+                parsed_url = urllib.parse.urlparse(remotepath)
+                if 'etag' not in list(response.headers.keys()) or response.headers['etag'] is None:
                     etag = ''
                 else:
                     etag = response.headers['etag']

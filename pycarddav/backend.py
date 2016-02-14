@@ -49,7 +49,7 @@ $ACCOUNTNAME_r:   # as in resource
 
 # TODO rename account to resource or similar
 
-from __future__ import print_function
+
 
 try:
     from pycarddav import model
@@ -59,7 +59,7 @@ try:
     import logging
     from os import path
 
-except ImportError, error:
+except ImportError as error:
     print(error)
     sys.exit(1)
 
@@ -251,7 +251,7 @@ class SQLiteDb(object):
                       BACKEND.DELETED
 
         """
-        if isinstance(vcard, (str, unicode)):  # unicode for py2, str for py3
+        if isinstance(vcard, str):  # unicode for py2, str for py3
             try:
                 vcard_s = vcard.decode('utf-8')
             except UnicodeEncodeError:
@@ -405,7 +405,7 @@ def get_random_href():
     """
     import random
     tmp_list = list()
-    for _ in xrange(3):
+    for _ in range(3):
         rand_number = random.randint(0, 0x100000000)
         tmp_list.append("{0:x}".format(rand_number))
     return "-".join(tmp_list).upper()

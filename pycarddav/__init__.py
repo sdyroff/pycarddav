@@ -22,7 +22,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import argparse
-import ConfigParser
+import configparser
 import getpass
 import re
 import logging
@@ -32,10 +32,10 @@ import subprocess
 import sys
 import xdg.BaseDirectory
 
-import version
+from . import version
 
 from netrc import netrc
-from urlparse import urlsplit
+from urllib.parse import urlsplit
 
 __productname__ = 'pyCardDAV'
 __version__ = version.__version__
@@ -94,10 +94,10 @@ class Namespace(dict):
 
 class Section(object):
 
-    READERS = {bool: ConfigParser.SafeConfigParser.getboolean,
-               float: ConfigParser.SafeConfigParser.getfloat,
-               int: ConfigParser.SafeConfigParser.getint,
-               str: ConfigParser.SafeConfigParser.get}
+    READERS = {bool: configparser.SafeConfigParser.getboolean,
+               float: configparser.SafeConfigParser.getfloat,
+               int: configparser.SafeConfigParser.getint,
+               str: configparser.SafeConfigParser.get}
 
     def __init__(self, parser, group):
         self._parser = parser
@@ -118,14 +118,14 @@ class Section(object):
         for option, default, filter_ in self._schema:
             try:
                 if filter_ is None:
-                    reader = ConfigParser.SafeConfigParser.get
+                    reader = configparser.SafeConfigParser.get
                     filter_ = lambda x: x
                 else:
                     reader = Section.READERS[type(default)]
                 self._parsed[option] = filter_(reader(self._parser, section, option))
                 # Remove option once handled (see the check function).
                 self._parser.remove_option(section, option)
-            except ConfigParser.Error:
+            except configparser.Error:
                 if filter_ is None:
                     self._parsed[option] = default
                 else:
@@ -207,7 +207,7 @@ class ConfigurationParser(object):
 
         # Build parsers and set common options.
         self._check_accounts = check_accounts
-        self._conf_parser = ConfigParser.SafeConfigParser()
+        self._conf_parser = configparser.SafeConfigParser()
         self._arg_parser = argparse.ArgumentParser(description=desc)
         self._arg_parser.add_argument(
             "-v", "--version", action="version", version=__version__)
@@ -243,7 +243,7 @@ class ConfigurationParser(object):
                 return None
             else:
                 logging.debug('Using configuration from %s', args.filename)
-        except ConfigParser.Error, e:
+        except configparser.Error as e:
             logging.error("Could not parse %s: %s", args.filename, e)
             return None
 
@@ -285,7 +285,7 @@ class ConfigurationParser(object):
         if not os.path.isdir(dbdir):
             try:
                 logging.debug('trying to create the directory for the db')
-                os.makedirs(dbdir, mode=0770)
+                os.makedirs(dbdir, mode=0o770)
                 logging.debug('success')
             except OSError as error:
                 logging.fatal('failed to create {0}: {1}'.format(dbdir, error))
@@ -373,8 +373,8 @@ class ConfigurationParser(object):
         """
         logging.debug(intro)
 
-        for name, value in sorted(dict.copy(conf).iteritems()):
-            if type(value) is list and not isinstance(value[0], basestring):
+        for name, value in sorted(dict.copy(conf).items()):
+            if type(value) is list and not isinstance(value[0], str):
                 for o in value:
                     self.dump(o, '\t' * tab + name + ':', tab + 1)
             elif type(value) is Namespace:
@@ -384,7 +384,7 @@ class ConfigurationParser(object):
 
     def _read_command_line(self):
         items = {}
-        for key, value in vars(self._arg_parser.parse_args()).iteritems():
+        for key, value in vars(self._arg_parser.parse_args()).items():
             if '__' in key:
                 section, option = key.split('__')
                 items.setdefault(section, Namespace({}))[option] = value
@@ -412,7 +412,7 @@ class ConfigurationParser(object):
             if not parser is None:
                 values = parser.parse(section)
                 if parser.is_collection():
-                    if not items.has_key(parser.group):
+                    if parser.group not in items:
                         items[parser.group] = []
                     items[parser.group].append(values)
                 else:

@@ -24,7 +24,7 @@
 The pycarddav abstract model and tools for VCard handling.
 """
 
-from __future__ import print_function
+
 
 import base64
 import logging
@@ -49,8 +49,8 @@ def list_clean(string):
     return rstring
 
 
-NO_STRINGS = [u"n", "n", u"no", "no"]
-YES_STRINGS = [u"y", "y", u"yes", "yes"]
+NO_STRINGS = ["n", "n", "no", "no"]
+YES_STRINGS = ["y", "y", "yes", "yes"]
 
 PROPERTIES = ['EMAIL', 'TEL']
 PROPS_ALL = ['FN', 'N', 'VERSION', 'NICKNAME', 'PHOTO', 'BDAY', 'ADR',
@@ -118,7 +118,7 @@ def vcard_from_vobject(vcard):
         property_value = line.value
 
         try:
-            if line.ENCODING_paramlist == [u'b'] or line.ENCODING_paramlist == [u'B']:
+            if line.ENCODING_paramlist == ['b'] or line.ENCODING_paramlist == ['B']:
                 property_value = base64.b64encode(line.value)
 
         except AttributeError:
@@ -193,11 +193,11 @@ class VCard(defaultdict):
         self.edited = 0
 
     def serialize(self):
-        return self.items().__repr__()
+        return list(self.items()).__repr__()
 
     @property
     def name(self):
-        return unicode(self['N'][0][0]) if self['N'] else ''
+        return str(self['N'][0][0]) if self['N'] else ''
 
     @name.setter
     def name(self, value):
@@ -207,14 +207,14 @@ class VCard(defaultdict):
 
     @property
     def fname(self):
-        return unicode(self['FN'][0][0]) if self['FN'] else ''
+        return str(self['FN'][0][0]) if self['FN'] else ''
 
     @fname.setter
     def fname(self, value):
         self['FN'][0] = (value, {})
 
     def alt_keys(self):
-        keylist = self.keys()
+        keylist = list(self.keys())
         for one in [x for x in ['FN', 'N', 'VERSION'] if x in keylist]:
             keylist.remove(one)
         keylist.sort()
@@ -226,7 +226,7 @@ class VCard(defaultdict):
         try:
             for one in self['EMAIL']:
                 try:
-                    typelist = ','.join(one[1][u'TYPE'])
+                    typelist = ','.join(one[1]['TYPE'])
                 except KeyError:
                     typelist = ''
                 collector.append(one[0] + "\t" + self.fname + "\t" + typelist)
@@ -240,7 +240,7 @@ class VCard(defaultdict):
         try:
             for one in self['TEL']:
                 try:
-                    typelist = ','.join(one[1][u'TYPE'])
+                    typelist = ','.join(one[1]['TYPE'])
                 except KeyError:
                     typelist = ''
                 collector.append(self.fname + "\t" + one[0] + "\t" + typelist)
@@ -274,7 +274,7 @@ class VCard(defaultdict):
 
     def _line_helper(self, line):
         collector = list()
-        for key in line[1].keys():
+        for key in list(line[1].keys()):
             collector.append(key + '=' + ','.join(line[1][key]))
         if collector == list():
             return ''
@@ -296,7 +296,7 @@ class VCard(defaultdict):
             choice = string.ascii_uppercase + string.digits
             return ''.join([random.choice(choice) for _ in range(36)])
 
-        if 'UID' not in self.keys():
+        if 'UID' not in list(self.keys()):
             self['UID'] = [(generate_random_uid(), dict())]
         collector = list()
         collector.append('BEGIN:VCARD')

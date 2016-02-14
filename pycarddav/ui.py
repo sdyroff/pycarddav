@@ -24,7 +24,7 @@
 The pycarddav interface to add, edit, or select a VCard.
 """
 
-from __future__ import print_function
+
 
 try:
     import sys
@@ -32,7 +32,7 @@ try:
 
     import pycarddav
 
-except ImportError, error:
+except ImportError as error:
     print(error)
     sys.exit(1)
 
@@ -248,8 +248,8 @@ class EditorPane(Pane):
         self._account = account
 
         self._label = vcard.fname if vcard.fname else vcard['EMAIL'][0][0]
-        self._fname_edit = urwid.Edit(u'', u'')
-        self._lname_edit = urwid.Edit(u'', u'')
+        self._fname_edit = urwid.Edit('', '')
+        self._lname_edit = urwid.Edit('', '')
         self._email_edits = None
 
         Pane.__init__(self, self._build_ui(), 'Edit %s' % vcard.fname)
@@ -299,16 +299,16 @@ class EditorPane(Pane):
             self._lname_edit.set_edit_text(names[0])
             self._fname_edit.set_edit_text(names[1])
         else:
-            self._lname_edit.set_edit_text(u'')
+            self._lname_edit.set_edit_text('')
             self._fname_edit.set_edit_text(names[0])
 
         return [urwid.Divider(),
                 urwid.Columns([
-                    ('fixed', 15, urwid.AttrWrap(urwid.Text(u'First Name'), 'line header')),
+                    ('fixed', 15, urwid.AttrWrap(urwid.Text('First Name'), 'line header')),
                     urwid.AttrWrap(self._fname_edit, 'edit', 'edit focused')]),
                 urwid.Divider(),
                 urwid.Columns([
-                    ('fixed', 15, urwid.AttrWrap(urwid.Text(u'Last Name'), 'line header')),
+                    ('fixed', 15, urwid.AttrWrap(urwid.Text('Last Name'), 'line header')),
                     urwid.AttrWrap(self._lname_edit, 'edit', 'edit focused')])]
 
     def _build_emails_section(self):
@@ -320,13 +320,13 @@ class EditorPane(Pane):
             content.extend([
                 urwid.Divider(),
                 urwid.Columns([
-                    ('fixed', 15, urwid.AttrWrap(urwid.Text(u'Email'), 'line header')),
+                    ('fixed', 15, urwid.AttrWrap(urwid.Text('Email'), 'line header')),
                     urwid.AttrWrap(edit, 'edit', 'edit focused')])])
 
         return content
 
     def _build_buttons_section(self):
-        buttons = [u'Cancel', u'Merge', u'Store']
+        buttons = ['Cancel', 'Merge', 'Store']
         row = urwid.GridFlow([urwid.AttrWrap(urwid.Button(lbl, self.on_button_press),
                              'button', 'button focused') for lbl in buttons],
                              10, 3, 1, 'left')
@@ -374,12 +374,12 @@ class Window(urwid.Frame):
 
     def __init__(self):
         self._track = []
-        self._title = u' {0} v{1}'.format(pycarddav.__productname__,
+        self._title = ' {0} v{1}'.format(pycarddav.__productname__,
                                           pycarddav.__version__)
 
         header = urwid.AttrWrap(urwid.Text(self._title), 'header')
         footer = urwid.AttrWrap(urwid.Text(
-            u' Use Up/Down/PgUp/PgDown:scroll. Esc: return. ?: help'),
+            ' Use Up/Down/PgUp/PgDown:scroll. Esc: return. ?: help'),
             'footer')
         urwid.Frame.__init__(self, urwid.Text(''),
                              header=header,
@@ -431,7 +431,7 @@ class Window(urwid.Frame):
             self.open(HelpPane(self._get_current_pane()))
 
     def _update(self, pane):
-        self.header.w.set_text(u'%s | %s' % (self._title, pane.title))
+        self.header.w.set_text('%s | %s' % (self._title, pane.title))
         self.set_body(pane)
 
     def _get_current_pane(self):

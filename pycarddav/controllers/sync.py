@@ -50,7 +50,7 @@ def sync(conf):
     abook = syncer.get_abook()  # type(abook): dict
     my_dbtool.check_account_table(conf.account.name, conf.account.resource)
 
-    for href, etag in abook.iteritems():
+    for href, etag in abook.items():
         if my_dbtool.needs_update(href, conf.account.name, etag=etag):
             logging.debug("getting %s etag: %s", href, etag)
             vcard = syncer.get_vcard(href)
@@ -113,6 +113,6 @@ def sync(conf):
         abook = syncer.get_abook()  # type (abook): dict
     r_href_account_list = my_dbtool.get_all_href_from_db_not_new(
         [conf.account.name])
-    delete = set([href for href, account in r_href_account_list]).difference(abook.keys())
+    delete = set([href for href, account in r_href_account_list]).difference(list(abook.keys()))
     for href in delete:
         my_dbtool.delete_vcard_from_db(href, conf.account.name)

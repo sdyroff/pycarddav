@@ -107,12 +107,12 @@ def delete(my_dbtool, search_string, conf):
         my_dbtool.delete_vcard_from_db(card.href, card.account)
     else:
         my_dbtool.mark_delete(card.href, card.account)
-        print(u'vcard {0} - "{1}" deleted from local db, '
+        print(('vcard {0} - "{1}" deleted from local db, '
               'will be deleted on the server on the next '
-              'sync'.format(card.href, card.fname))
+              'sync'.format(card.href, card.fname)))
 
 def search(my_dbtool, search_string, conf):
-    print("searching for " + conf.query.search_string + "...")
+    print(("searching for " + conf.query.search_string + "..."))
 
     for vcard in my_dbtool.search(search_string, conf.sync.accounts,
             conf.query.where):
@@ -125,5 +125,5 @@ def search(my_dbtool, search_string, conf):
         else:
             lines = vcard.pretty_min
         if not lines == '':
-            print(lines.encode('utf-8'))
+            print((lines.encode('utf-8')))
 
