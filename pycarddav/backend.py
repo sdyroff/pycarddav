@@ -251,10 +251,7 @@ class SQLiteDb(object):
 
         """
         if isinstance(vcard, str):  # unicode for py2, str for py3
-            try:
-                vcard_s = vcard.decode('utf-8')
-            except UnicodeEncodeError:
-                vcard_s = vcard  # incase it's already unicode and py2
+            vcard_s = vcard
             try:
                 vcard = model.vcard_from_string(vcard)
             except Exception as error:

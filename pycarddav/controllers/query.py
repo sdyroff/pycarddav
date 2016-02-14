@@ -38,7 +38,7 @@ def query(conf):
         sys.exit(str(conf.sqlite.path) + " file does not exist, please sync"
                  " with pycardsyncer first.")
 
-    search_string = conf.query.search_string.decode("utf-8")
+    search_string = conf.query.search_string
 
     my_dbtool = backend.SQLiteDb(db_path=path.expanduser(conf.sqlite.path),
                                  encoding="utf-8",
@@ -124,5 +124,5 @@ def search(my_dbtool, search_string, conf):
         else:
             lines = vcard.pretty_min
         if not lines == '':
-            print((lines.encode('utf-8')))
+            print((lines))
 

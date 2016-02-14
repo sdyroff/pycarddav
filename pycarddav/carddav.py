@@ -150,7 +150,7 @@ class PyCardDAV(object):
                                     headers=self.headers,
                                     **self._settings)
         response.raise_for_status()
-        return response.content
+        return response.text
 
     def update_vcard(self, card, href, etag):
         """
@@ -237,7 +237,7 @@ class PyCardDAV(object):
                                         **self._settings)
         response.raise_for_status()
 
-        return response.content
+        return response.text
 
     @classmethod
     def _process_xml_props(cls, xml):
